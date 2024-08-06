@@ -104,10 +104,23 @@ const getState = ({ getStore, getActions, setStore }) => {
         try {
           const requestOptions = createRequestOptions("GET", null, true);
           const response = await fetch(`${baseURL}/post`, requestOptions);
-		  return await handleResponse(response);
+          return await handleResponse(response);
         } catch (error) {
-			console.log("Error getting posts", error);
-		}
+          console.log("Error getting posts", error);
+        }
+      },
+      likePost: async (postId) => {
+        try {
+          const requestOptions = createRequestOptions("POST", null, true);
+          const response = await fetch(
+            `${baseURL}/post/${postId}/like`,
+            requestOptions
+          );
+          return await handleResponse(response);
+        } catch (error) {
+          console.error("Error liking post", error);
+          return null;
+        }
       },
     },
   };
