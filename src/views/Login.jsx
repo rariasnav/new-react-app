@@ -20,17 +20,31 @@ export const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await actions.login(form);
-    if(response.ok){
-        navigate("/");
+    if (response.ok) {
+      navigate("/");
     }
   };
 
-  useEffect( ()=>{
-    if(store.loggedUser){
-        navigate("/");
+  useEffect(() => {
+    if (store.loggedUser) {
+      navigate("/");
     }
-  },[store.loggedUser, navigate] );
+  }, [store.loggedUser, navigate]);
 
+  if (store.loggedUser === null) {
+    return (
+      <div className="container">
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "100vh" }}
+        >
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="container">
       <div className="body text-center m-5">
@@ -61,7 +75,11 @@ export const Login = () => {
               onChange={handleChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary" onClick={ (e)=>handleSubmit(e) }>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            onClick={(e) => handleSubmit(e)}
+          >
             Login
           </button>
         </form>

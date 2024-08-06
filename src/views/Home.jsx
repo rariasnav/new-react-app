@@ -2,10 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Context } from "../js/store/appContext";
 import moment from "moment";
+import Posts from "./Posts";
 
 export const Home = () => {
   const { store, actions } = useContext(Context);
-  const [posts, setPosts] = useState(null);
   const [preview, setPreview] = useState(null);
   const [postPic, setPostPic] = useState(null);
   const [location, setLocation] = useState(null);
@@ -74,26 +74,16 @@ export const Home = () => {
     getLocation();
   }, []);
 
-  useEffect(() => {
-    const getData = async () => {
-      const response = await actions.getPosts();
-      if(response) {
-        setPosts(response)
-      }
-    };
-    getData();    
-  }, []);  
-
   return (
     <div className="container my-5">
-      {store.loggedUser == null && (
+      {store.loggedUser === null && (
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
       )}
-      {store.loggedUser == false && (
+      {store.loggedUser === false && (
         <div className="body text-center m-5">
           <div className="d-grid gap-2 m-auto" style={{ width: "26rem" }}>
             <h1 className="text-primary-custom">
@@ -105,7 +95,7 @@ export const Home = () => {
       )}
       {store.loggedUser && (
         <>
-          <div className="d-grid gap-2 col-6 mx-auto">
+          <div className="d-grid gap-2 col-6 mx-auto mb-4">
             <button
               type="button"
               className="btn btn-secondary ms-2 edit-picture-btn"
@@ -115,32 +105,9 @@ export const Home = () => {
               Create a post
             </button>
           </div>
-          <div className="album py-5 bg-background-light-color">
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-              <div className="col">
-                <div className="card shadow-sm">
-                  <img
-                    src={`https://via.placeholder.com/150`}
-                    className="bd-placeholder-img card-img-top"
-                    alt="Thumbnail"
-                  />
-                  <div className="card-body">
-                    <h3 className="card-text">asdf</h3>
-                    <p className="card-text">asdf</p>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="btn-group">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-secondary"
-                          onClick={() => navigate("/login")}
-                        >
-                          Ask for this service
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div className="d-flex justify-content-center">
+            <div>
+              <Posts />
             </div>
           </div>
         </>

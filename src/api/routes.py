@@ -182,3 +182,27 @@ def create_post():
     except Exception as e:
         current_app.logger.error(f"Error creating post: {str(e)}")
         return jsonify({"error": f"Error creating post: {str(e)}"}), 500
+
+@api.route('/post/<int:post_id>/like', methods=['POST'])
+@jwt_required()
+def like_post(post_id):
+    try:
+        username = get_jwt_identity()
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return jsonify({"error": "Invalid request"}), 401
+        
+        post = Post.query.get_or_404(post_id)
+        if post in user.liked_posts:
+            user.liked_posts.remove(post)
+            message = 'Unliked'
+        else:
+            user.liked_posts.append(post)
+            message = 'Liked'
+
+        db.session.commit()
+        return jsonify({"msg": message, 'likes_count': len(post.likers)})
+
+    except Exception as e:
+        current_app.logger.error(f"Like error: {str(e)}")
+        return jsonify({"error": f"Like error: {str(e)}"}), 500
