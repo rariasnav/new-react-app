@@ -12,7 +12,7 @@ import cloudinary.uploader
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
-CORS(api)
+CORS(api, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -145,20 +145,25 @@ def get_posts():
 @jwt_required()
 def create_post():
     try:
-        body = request.get_json()
+        body = request.form
+
+        image_file = request.files['image']
 
         username = get_jwt_identity()
         user = User.query.filter_by(username=username).first()
         if not user:
             return jsonify({"error": "Invalid request"}), 401
         
-        required_fields = ['image', 'created_at', 'location', 'message']
+        required_fields = ['created_at', 'location', 'message']
         for field in required_fields:
             if field not in body:
-                return jsonify({'error': f'missing field {field}'}), 400
+                return jsonify({'error': f'missing field {field}'}), 400            
+        
+        upload_result = cloudinary.uploader.upload(image_file)
+        image_url = upload_result['secure_url']
             
         new_post = Post(
-            image=body['image'],
+            image=image_url,
             message=body['message'],
             author_id=user.id,
             created_at=body['created_at'],
